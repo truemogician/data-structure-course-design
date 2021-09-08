@@ -30,9 +30,6 @@
     <None Remove="Assets\Unlink.png" />
   </ItemGroup>
   <ItemGroup>
-    <Page Remove="Resource.xaml" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="AutomaticGraphLayout.WpfGraphControl" Version="1.1.12" />
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.242703">
       <PrivateAssets>all</PrivateAssets>
@@ -74,7 +71,6 @@
     <Resource Include="Assets\Unlink.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Resource.xaml" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Examples\Tree.msagl">
