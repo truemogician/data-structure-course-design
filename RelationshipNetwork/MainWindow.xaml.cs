@@ -14,6 +14,7 @@ using Point = Microsoft.Msagl.Core.Geometry.Point;
 
 namespace RelationshipNetwork {
 	public partial class MainWindow {
+		#region Fields
 		private static readonly FieldInfo ViewerFieldInfo = typeof(AutomaticGraphLayoutControl).GetField("_graphViewer", BindingFlags.NonPublic | BindingFlags.Instance);
 
 		private readonly OpenFileDialog _openFileDialog = new();
@@ -21,7 +22,9 @@ namespace RelationshipNetwork {
 		private readonly SaveFileDialog _saveFileDialog = new();
 
 		private bool _highlighting;
+		#endregion
 
+		#region Constructors
 		public MainWindow() {
 			InitializeComponent();
 			SelectedNodes = new ObservableCollection<IViewerNode>();
@@ -50,7 +53,9 @@ namespace RelationshipNetwork {
 			SortByRelativityButton.Click += SortByRelativityButtonClick;
 			SelectedNodes.CollectionChanged += SelectedNodesCollectionChanged;
 		}
+		#endregion
 
+		#region Properties
 		public GraphViewer Viewer { get; }
 
 		public Graph Graph {
@@ -76,6 +81,7 @@ namespace RelationshipNetwork {
 			}
 		}
 
+		#region Context Menus
 		private ContextMenu BackgroundMenu => new();
 
 		private ContextMenu SingleNodeMenu {
@@ -96,9 +102,15 @@ namespace RelationshipNetwork {
 					NewMenuItem("删除关系", () => DeleteEdges(SelectedNodes))
 				}
 			};
+		#endregion
+		#endregion
 
+		#region Events
 		public event EventHandler GraphChanged = delegate { };
+		#endregion
 
+		#region Methods
+		#region Event Handlers
 		private void GraphControlMouseRightButtonUp(object sender, RoutedEventArgs args) {
 			(SelectedNodes.Count switch {
 				0  => BackgroundMenu,
@@ -189,7 +201,9 @@ namespace RelationshipNetwork {
 					StopHighlighting();
 			}
 		}
+		#endregion
 
+		#region Utilities
 		private static MenuItem NewMenuItem(string header, RoutedEventHandler onClick) {
 			var result = new MenuItem {Header = header};
 			result.Click += onClick;
@@ -197,11 +211,6 @@ namespace RelationshipNetwork {
 		}
 
 		private static MenuItem NewMenuItem(string header, Action onClick) => NewMenuItem(header, (_, _) => onClick());
-
-		private void RefreshToolbar() {
-			DeleteNodeButton.IsEnabled = SelectedNodes.Count > 0;
-			DeleteEdgeButton.IsEnabled = SelectedNodes.Count > 1;
-		}
 
 		private void AttachEvent(IViewerNode viewerNode) {
 			viewerNode.MarkedForDraggingEvent += (_, _) => { SelectedNodes.Add(viewerNode); };
@@ -212,7 +221,50 @@ namespace RelationshipNetwork {
 			foreach (var vNode in ViewerNodes)
 				AttachEvent(vNode);
 		}
+		#endregion
 
+		#region Render
+		private void RefreshToolbar() {
+			DeleteNodeButton.IsEnabled = SelectedNodes.Count > 0;
+			DeleteEdgeButton.IsEnabled = SelectedNodes.Count > 1;
+		}
+
+		private void HighlightRelationship() {
+			foreach (var node in Graph.Nodes)
+				node.Attr.Color = node.Label.FontColor = (int)node.UserData switch {
+					-2 => Color.Black,
+					-1 => Color.Cyan,
+					0  => Color.Gray,
+					>0 => Color.Yellow,
+					_  => throw new ArgumentOutOfRangeException()
+				};
+		}
+
+		private void HideRelationship() {
+			foreach (var node in Graph.Nodes)
+				node.Attr.Color = node.Label.FontColor = Color.Black;
+		}
+
+		private void StartHighlighting() {
+			CalculateRelativity(SelectedNodes.Single().Node);
+			HighlightRelationship();
+			Highlighting = true;
+		}
+
+		private void StopHighlighting() {
+			HideRelationship();
+			Highlighting = false;
+		}
+
+		private void RefreshHighlight() {
+			if (Highlighting) {
+				CalculateRelativity(SelectedNodes.Single().Node);
+				HighlightRelationship();
+			}
+		}
+		#endregion
+
+		#region Graph Manipulation
 		private bool AddNode(string name, Point? point = null) {
 			try {
 				var node = new Node(name);
@@ -254,7 +306,9 @@ namespace RelationshipNetwork {
 			if (changed)
 				GraphChanged(this, EventArgs.Empty);
 		}
+		#endregion
 
+		#region Algortithm
 		private void CalculateRelativity(Node target) {
 			foreach (var node in Graph.Nodes)
 				node.UserData = 0;
@@ -277,39 +331,7 @@ namespace RelationshipNetwork {
 				.SelectMany(nodes => nodes))
 				nd.UserData = (int)nd.UserData + 1;
 		}
-
-		private void HighlightRelationship() {
-			foreach (var node in Graph.Nodes)
-				node.Attr.Color = node.Label.FontColor = (int)node.UserData switch {
-					-2 => Color.Black,
-					-1 => Color.Cyan,
-					0  => Color.Gray,
-					>0 => Color.Yellow,
-					_  => throw new ArgumentOutOfRangeException()
-				};
-		}
-
-		private void HideRelationship() {
-			foreach (var node in Graph.Nodes)
-				node.Attr.Color = node.Label.FontColor = Color.Black;
-		}
-
-		private void StartHighlighting() {
-			CalculateRelativity(SelectedNodes.Single().Node);
-			HighlightRelationship();
-			Highlighting = true;
-		}
-
-		private void StopHighlighting() {
-			HideRelationship();
-			Highlighting = false;
-		}
-
-		private void RefreshHighlight() {
-			if (Highlighting) {
-				CalculateRelativity(SelectedNodes.Single().Node);
-				HighlightRelationship();
-			}
-		}
+		#endregion
+		#endregion
 	}
 }
