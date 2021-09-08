@@ -207,7 +207,7 @@ namespace RelationshipNetwork {
 			if (AutoHighlightButton.IsChecked == true) {
 				if (SelectedNodes.Count == 1)
 					StartHighlighting(SelectedNodes[0].Node);
-				else if (args.Action == NotifyCollectionChangedAction.Add && SelectedNodes.Count == 2 && Highlighting)
+				else if (args.Action == NotifyCollectionChangedAction.Add && SelectedNodes.Count == 2 && Highlighting && (int)SelectedNodes[1].Node.UserData > 0)
 					HighlightPath(SelectedNodes[0].Node, SelectedNodes[1].Node);
 				else if (SelectedNodes.Count != 1 && Highlighting)
 					StopHighlighting();
