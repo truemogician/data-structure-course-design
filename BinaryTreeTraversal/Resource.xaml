@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<BitmapImage x:Key="LoadFile" UriSource="Assets/OpenFile.png" />
+	<BitmapImage x:Key="SaveFile" UriSource="Assets/SaveFile.png" />
+	<BitmapImage x:Key="Add" UriSource="Assets/Add.png" />
+	<BitmapImage x:Key="Delete" UriSource="Assets/Delete.png" />
+	<BitmapImage x:Key="Undo" UriSource="Assets/Undo.png" />
+	<BitmapImage x:Key="Redo" UriSource="Assets/Redo.png" />
+	<BitmapImage x:Key="Refresh" UriSource="Assets/Refresh.png" />
+	<BitmapImage x:Key="Link" UriSource="Assets/Link.png" />
+	<BitmapImage x:Key="Unlink" UriSource="Assets/Unlink.png" />
+	<BitmapImage x:Key="Highlight" UriSource="Assets/Highlight.png" />
+	<BitmapImage x:Key="Sort" UriSource="Assets/Sort.png" />
+</ResourceDictionary>

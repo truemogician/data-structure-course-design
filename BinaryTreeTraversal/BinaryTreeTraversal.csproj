@@ -1,0 +1,79 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>BinaryTreeTraversal</AssemblyName>
+    <RootNamespace>BinaryTreeTraversal</RootNamespace>
+    <ApplicationIcon>Binary.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Assets\Add.png" />
+    <None Remove="Assets\Binary.ico" />
+    <None Remove="Assets\Binary.png" />
+    <None Remove="Assets\Delete.png" />
+    <None Remove="Assets\Highlight.png" />
+    <None Remove="Assets\InOrder.png" />
+    <None Remove="Assets\Link.png" />
+    <None Remove="Assets\Network.ico" />
+    <None Remove="Assets\Network.png" />
+    <None Remove="Assets\OpenFile.png" />
+    <None Remove="Assets\PostOrder.png" />
+    <None Remove="Assets\PreOrder.png" />
+    <None Remove="Assets\Redo.png" />
+    <None Remove="Assets\Refresh.png" />
+    <None Remove="Assets\SaveFile.png" />
+    <None Remove="Assets\Sort.png" />
+    <None Remove="Assets\Thread.png" />
+    <None Remove="Assets\Undo.png" />
+    <None Remove="Assets\Unlink.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Resource.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutomaticGraphLayout.WpfGraphControl" Version="1.1.12" />
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.242703">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\Add.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Binary.ico" />
+    <Resource Include="Assets\Binary.png" />
+    <Resource Include="Assets\Delete.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Highlight.png" />
+    <Resource Include="Assets\InOrder.png" />
+    <Resource Include="Assets\Link.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\OpenFile.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\PostOrder.png" />
+    <Resource Include="Assets\PreOrder.png" />
+    <Resource Include="Assets\Redo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Refresh.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\SaveFile.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Thread.png" />
+    <Resource Include="Assets\Undo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Unlink.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resource.xaml" />
+  </ItemGroup>
+</Project>

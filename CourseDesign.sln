@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31424.327
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1D43443D-80A0-4B2B-A57C-42EB3A00FAB6}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RelationshipNetwork", "RelationshipNetwork\RelationshipNetwork.csproj", "{4E3610AC-000F-4E53-934A-3F94B62354CB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BinaryTreeTraversal", "BinaryTreeTraversal\BinaryTreeTraversal.csproj", "{8C09D65C-77B5-46D9-BCA1-A8F9D6FC164B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E3610AC-000F-4E53-934A-3F94B62354CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4E3610AC-000F-4E53-934A-3F94B62354CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4E3610AC-000F-4E53-934A-3F94B62354CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4E3610AC-000F-4E53-934A-3F94B62354CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C09D65C-77B5-46D9-BCA1-A8F9D6FC164B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C09D65C-77B5-46D9-BCA1-A8F9D6FC164B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C09D65C-77B5-46D9-BCA1-A8F9D6FC164B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C09D65C-77B5-46D9-BCA1-A8F9D6FC164B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {00B46A74-B62E-4C2D-817E-90720D04980F}
+	EndGlobalSection
+EndGlobal
