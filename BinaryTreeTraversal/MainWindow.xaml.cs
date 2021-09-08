@@ -170,8 +170,12 @@ namespace BinaryTreeTraversal {
 			}
 		}
 
+		/// <summary>
+		/// Show context menu according to the number of selected nodes
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void GraphControlMouseRightButtonUp(object sender, MouseButtonEventArgs args) {
-			// Show context menu according to the number of selected nodes
 			(SelectedNodes.Count switch {
 				0   => BackgroundMenu,
 				1   => SingleNodeMenu,
@@ -180,6 +184,11 @@ namespace BinaryTreeTraversal {
 			}).IsOpen = true;
 		}
 
+		/// <summary>
+		/// Open graph file through OpenFileDialog
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void LoadGraphButtonClick(object sender, RoutedEventArgs args) {
 			_openFileDialog.Title = "选择关系图文件";
 			_openFileDialog.Filter = "关系图文件|*.msagl";
@@ -187,6 +196,11 @@ namespace BinaryTreeTraversal {
 				Graph = Graph.Read(_openFileDialog.FileName);
 		}
 
+		/// <summary>
+		/// Save graph file through SaveFileDialog
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void SaveGraphButtonClick(object sender, RoutedEventArgs args) {
 			_saveFileDialog.Title = "保存关系图文件";
 			_saveFileDialog.Filter = "关系图文件|*.msagl";
@@ -194,21 +208,41 @@ namespace BinaryTreeTraversal {
 				Graph.WriteToStream(_saveFileDialog.OpenFile());
 		}
 
+		/// <summary>
+		/// Undo layout changes
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void UndoButtonClick(object sender, RoutedEventArgs args) {
 			if (Viewer.LayoutEditor.CanUndo)
 				Viewer.LayoutEditor.Undo();
 		}
 
+		/// <summary>
+		/// Redo layout changes
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void RedoButtonClick(object sender, RoutedEventArgs args) {
 			if (Viewer.LayoutEditor.CanRedo)
 				Viewer.LayoutEditor.Redo();
 		}
 
+		/// <summary>
+		/// Rebuild tree and refresh layout
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void RefreshLayoutButtonClick(object sender, RoutedEventArgs args) {
 			var _ = TreeRoot;
 			RefreshLayout();
 		}
 
+		/// <summary>
+		/// Add node when ENTER is pressed
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void NodeNameTextBoxKeyUp(object sender, KeyEventArgs args) {
 			if (args.Key == Key.Enter) {
 				AddNode(NodeNameTextBox.Text);
@@ -216,13 +250,28 @@ namespace BinaryTreeTraversal {
 			}
 		}
 
+		/// <summary>
+		/// Add node
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void AddNodeButtonClick(object sender, RoutedEventArgs args) {
 			AddNode(NodeNameTextBox.Text);
 			NodeNameTextBox.Text = "";
 		}
 
+		/// <summary>
+		/// Delete selected nodes
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void DeleteNodeButtonClick(object sender, RoutedEventArgs args) => DeleteNodes(SelectedNodes);
 
+		/// <summary>
+		/// Enter adding edge mode
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void AddEdgeButtonClick(object sender, RoutedEventArgs args) {
 			Viewer.InsertingEdge = AddEdgeButton.IsChecked == true;
 			if (AddEdgeButton.IsChecked == true) {
@@ -235,6 +284,11 @@ namespace BinaryTreeTraversal {
 			}
 		}
 
+		/// <summary>
+		/// Delete all edges among selected nodes
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		private void DeleteEdgeButtonClick(object sender, RoutedEventArgs args) => DeleteEdges(SelectedNodes);
 
 		private static MenuItem NewMenuItem(string header, RoutedEventHandler onClick) {
@@ -315,24 +369,39 @@ namespace BinaryTreeTraversal {
 		}
 		#endregion
 
+		#region Utility Methods
 		private static MenuItem NewMenuItem(string header, Action onClick) => NewMenuItem(header, (_, _) => onClick());
+		#endregion
 
 		#region Viewer Methods
+		/// <summary>
+		/// Attach mark and unmark event to given viewer node
+		/// </summary>
+		/// <param name="viewerNode"></param>
 		private void AttachEvent(IViewerNode viewerNode) {
-			viewerNode.MarkedForDraggingEvent += (_, _) => { SelectedNodes.Add(viewerNode); };
+			viewerNode.MarkedForDraggingEvent += (_, _) => SelectedNodes.Add(viewerNode);
 			viewerNode.UnmarkedForDraggingEvent += (_, _) => SelectedNodes.Remove(viewerNode);
 		}
 
+		/// <summary>
+		/// Attach mark and unmark event to all viewer node of the current graph 
+		/// </summary>
 		private void AttachEventToAll() {
 			foreach (var vNode in ViewerNodes)
 				AttachEvent(vNode);
 		}
 
+		/// <summary>
+		/// Refresh the enablility of some toolbar buttons
+		/// </summary>
 		private void RefreshToolbar() {
 			DeleteNodeButton.IsEnabled = SelectedNodes.Count > 0;
 			DeleteEdgeButton.IsEnabled = SelectedNodes.Count > 1;
 		}
 
+		/// <summary>
+		/// Refresh the entire layout
+		/// </summary>
 		private void RefreshLayout() {
 			foreach (var vNode in ViewerNodes)
 				vNode.Node.Attr.LineWidth = 1;
@@ -349,6 +418,9 @@ namespace BinaryTreeTraversal {
 			AttachEventToAll();
 		}
 
+		/// <summary>
+		/// Render threaded edges after the tree is built and threadified
+		/// </summary>
 		private void ShowThread() {
 			if (TreeRoot is null)
 				return;
@@ -380,6 +452,9 @@ namespace BinaryTreeTraversal {
 			}
 		}
 
+		/// <summary>
+		/// Remove threaded edges when traversal animation ends
+		/// </summary>
 		private void HideThread() {
 			foreach (var viewerEdge in _threadEdges)
 				Viewer.RemoveEdge(viewerEdge, false);
@@ -388,9 +463,15 @@ namespace BinaryTreeTraversal {
 		#endregion
 
 		#region Graph Manipulation
-		private bool AddNode(string name, Point? point = null) {
+		/// <summary>
+		/// Add new node
+		/// </summary>
+		/// <param name="id">Id of the node</param>
+		/// <param name="point">The position of the new node to be created</param>
+		/// <returns>False if <paramref name="id"/> conflicts with existing nodes</returns>
+		private bool AddNode(string id, Point? point = null) {
 			try {
-				var node = new Node(name) {Attr = {Shape = Shape.Circle}};
+				var node = new Node(id) {Attr = {Shape = Shape.Circle}};
 				var viewerNode = point is null ? Viewer.CreateIViewerNode(node) : Viewer.CreateIViewerNode(node, point.Value, null);
 				AttachEvent(viewerNode);
 				Viewer.AddNode(viewerNode, true);
@@ -402,6 +483,10 @@ namespace BinaryTreeTraversal {
 			}
 		}
 
+		/// <summary>
+		/// Delete nodes and all their edges
+		/// </summary>
+		/// <param name="nodes">Nodes to be deleted</param>
 		private void DeleteNodes(IEnumerable<IViewerNode> nodes) {
 			foreach (var node in nodes) {
 				foreach (var edge in node.InEdges.Concat(node.OutEdges).Concat(node.SelfEdges))
@@ -411,6 +496,10 @@ namespace BinaryTreeTraversal {
 			GraphChange(this, EventArgs.Empty);
 		}
 
+		/// <summary>
+		/// Delete edges among <paramref name="nodes"/>
+		/// </summary>
+		/// <param name="nodes"></param>
 		private void DeleteEdges(IEnumerable<IViewerNode> nodes) {
 			var vNodeArray = nodes.ToArray();
 			var nodeArray = vNodeArray.Select(n => n.Node).ToList();
@@ -432,6 +521,11 @@ namespace BinaryTreeTraversal {
 		#endregion
 
 		#region Algorithm Methods
+		/// <summary>
+		/// Traverse the tree by <paramref name="order"/>
+		/// </summary>
+		/// <param name="order"></param>
+		/// <exception cref="InvalidOperationException">Throws if tree building failed</exception>
 		private IEnumerable<Node> Traverse(TraversalOrder order) {
 			if (TreeRoot is null)
 				throw _buildTreeException;
@@ -453,6 +547,11 @@ namespace BinaryTreeTraversal {
 				yield return node;
 		}
 
+		/// <summary>
+		/// Traverse the tree by <paramref name="order"/> using thread information
+		/// </summary>
+		/// <param name="order"></param>
+		/// <exception cref="InvalidOperationException">Throws if tree building failed</exception>
 		private IEnumerable<Node> TraverseWithThread(TraversalOrder order) {
 			if (TreeRoot is null)
 				throw _buildTreeException;
@@ -509,6 +608,9 @@ namespace BinaryTreeTraversal {
 		#endregion
 	}
 
+	/// <summary>
+	/// Extra data that describes the binary tree structure of a node. Stored in <see cref="Node.UserData"/>
+	/// </summary>
 	public class BinaryInfo {
 		public BinaryInfo() { }
 
@@ -518,12 +620,18 @@ namespace BinaryTreeTraversal {
 
 		public Node LeftChild { get; set; }
 
+		/// <summary>
+		/// Whether the left child is a thread
+		/// </summary>
 		public bool IsLeftThread { get; set; }
 
 		public bool HasLeftChild => LeftChild is not null && !IsLeftThread;
 
 		public Node RightChild { get; set; }
 
+		/// <summary>
+		/// Whether the right child is a thread
+		/// </summary>
 		public bool IsRightThread { get; set; }
 
 		public bool HasRightChild => RightChild is not null && !IsRightThread;
