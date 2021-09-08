@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -33,86 +34,21 @@ namespace RelationshipNetwork {
 			Viewer = ViewerFieldInfo.GetValue(GraphControl) as GraphViewer;
 			RefreshToolbar();
 
-			Loaded += MainWindow_Loaded;
 			GraphChanged += (_, _) => RefreshHighlight();
-			GraphControl.MouseRightButtonUp += (_, _) => {
-				(SelectedNodes.Count switch {
-					0  => BackgroundMenu,
-					1  => SingleNodeMenu,
-					>1 => MultipleNodesMenu,
-					_  => throw new ArgumentOutOfRangeException()
-				}).IsOpen = true;
-			};
-			LoadGraphButton.Click += (_, _) => {
-				_openFileDialog.Title = "选择关系图文件";
-				_openFileDialog.Filter = "关系图文件|*.msagl";
-				if (_openFileDialog.ShowDialog() == true)
-					Graph = Graph.Read(_openFileDialog.FileName);
-			};
-			SaveGraphButton.Click += (_, _) => {
-				_saveFileDialog.Title = "保存关系图文件";
-				_saveFileDialog.Filter = "关系图文件|*.msagl";
-				if (_saveFileDialog.ShowDialog() == true)
-					Graph.WriteToStream(_saveFileDialog.OpenFile());
-			};
-			UndoButton.Click += (_, _) => {
-				if (Viewer.LayoutEditor.CanUndo)
-					Viewer.LayoutEditor.Undo();
-			};
-			RedoButton.Click += (_, _) => {
-				if (Viewer.LayoutEditor.CanRedo)
-					Viewer.LayoutEditor.Redo();
-			};
-			RefreshLayoutButton.Click += (_, _) => {
-				foreach (var vNode in ViewerNodes)
-					vNode.Node.Attr.LineWidth = 1;
-				SelectedNodes.Clear();
-				Viewer.NeedToCalculateLayout = true;
-				Viewer.Graph = Viewer.Graph;
-				Viewer.NeedToCalculateLayout = false;
-				AttachEventToAll();
-			};
-			AddNodeButton.Click += (_, _) => {
-				AddNode(NodeNameTextBox.Text);
-				NodeNameTextBox.Text = "";
-			};
-			NodeNameTextBox.KeyUp += (_, args) => {
-				if (args.Key == Key.Enter) {
-					AddNode(NodeNameTextBox.Text);
-					NodeNameTextBox.Text = "";
-				}
-			};
-			DeleteNodeButton.Click += (_, _) => DeleteNodes(SelectedNodes);
-			AddEdgeButton.Click += (_, _) => {
-				Viewer.InsertingEdge = AddEdgeButton.IsChecked == true;
-				if (AddEdgeButton.IsChecked == true)
-					Viewer.LayoutEditor.PrepareForEdgeDragging();
-				else
-					Viewer.LayoutEditor.ForgetEdgeDragging();
-			};
-			DeleteEdgeButton.Click += (_, _) => DeleteEdges(SelectedNodes);
-			AutoHighlightButton.Click += (_, _) => {
-				if (AutoHighlightButton.IsChecked == true) {
-					if (SelectedNodes.Count == 1)
-						StartHighlighting();
-				}
-				else if (Highlighting)
-					StopHighlighting();
-			};
-			SortByRelativityButton.Click += (_, _) => {
-				var resultWindow = new SortResultWindow(Graph);
-				resultWindow.ShowDialog();
-			};
-
-			SelectedNodes.CollectionChanged += (_, _) => {
-				RefreshToolbar();
-				if (AutoHighlightButton.IsChecked == true) {
-					if (SelectedNodes.Count == 1)
-						StartHighlighting();
-					else if (SelectedNodes.Count != 1 && Highlighting)
-						StopHighlighting();
-				}
-			};
+			GraphControl.MouseRightButtonUp += GraphControlMouseRightButtonUp;
+			LoadGraphButton.Click += LoadGraphButtonClick;
+			SaveGraphButton.Click += SaveGraphButtonClick;
+			UndoButton.Click += UndoButtonClick;
+			RedoButton.Click += RedoButtonClick;
+			RefreshLayoutButton.Click += RefreshLayoutButtonClick;
+			AddNodeButton.Click += AddNodeButtonClick;
+			NodeNameTextBox.KeyUp += NodeNameTextBoxKeyUp;
+			DeleteNodeButton.Click += DeleteNodeButtonClick;
+			AddEdgeButton.Click += AddEdgeButtonClick;
+			DeleteEdgeButton.Click += DeleteEdgeButtonClick;
+			AutoHighlightButton.Click += AutoHighlightButtonClick;
+			SortByRelativityButton.Click += SortByRelativityButtonClick;
+			SelectedNodes.CollectionChanged += SelectedNodesCollectionChanged;
 		}
 
 		public GraphViewer Viewer { get; }
@@ -162,6 +98,97 @@ namespace RelationshipNetwork {
 			};
 
 		public event EventHandler GraphChanged = delegate { };
+
+		private void GraphControlMouseRightButtonUp(object sender, RoutedEventArgs args) {
+			(SelectedNodes.Count switch {
+				0  => BackgroundMenu,
+				1  => SingleNodeMenu,
+				>1 => MultipleNodesMenu,
+				_  => throw new ArgumentOutOfRangeException()
+			}).IsOpen = true;
+		}
+
+		private void LoadGraphButtonClick(object sender, RoutedEventArgs args) {
+			_openFileDialog.Title = "选择关系图文件";
+			_openFileDialog.Filter = "关系图文件|*.msagl";
+			if (_openFileDialog.ShowDialog() == true)
+				Graph = Graph.Read(_openFileDialog.FileName);
+		}
+
+		private void SaveGraphButtonClick(object sender, RoutedEventArgs args) {
+			_saveFileDialog.Title = "保存关系图文件";
+			_saveFileDialog.Filter = "关系图文件|*.msagl";
+			if (_saveFileDialog.ShowDialog() == true)
+				Graph.WriteToStream(_saveFileDialog.OpenFile());
+		}
+
+		private void UndoButtonClick(object sender, RoutedEventArgs args) {
+			if (Viewer.LayoutEditor.CanUndo)
+				Viewer.LayoutEditor.Undo();
+		}
+
+		private void RedoButtonClick(object sender, RoutedEventArgs args) {
+			if (Viewer.LayoutEditor.CanRedo)
+				Viewer.LayoutEditor.Redo();
+		}
+
+		private void RefreshLayoutButtonClick(object sender, RoutedEventArgs args) {
+			foreach (var vNode in ViewerNodes)
+				vNode.Node.Attr.LineWidth = 1;
+			SelectedNodes.Clear();
+			Viewer.NeedToCalculateLayout = true;
+			Viewer.Graph = Viewer.Graph;
+			Viewer.NeedToCalculateLayout = false;
+			AttachEventToAll();
+		}
+
+		private void AddNodeButtonClick(object sender, RoutedEventArgs args) {
+			AddNode(NodeNameTextBox.Text);
+			NodeNameTextBox.Text = "";
+		}
+
+		private void NodeNameTextBoxKeyUp(object sender, KeyEventArgs args) {
+			if (args.Key == Key.Enter) {
+				AddNode(NodeNameTextBox.Text);
+				NodeNameTextBox.Text = "";
+			}
+		}
+
+		private void DeleteNodeButtonClick(object sender, RoutedEventArgs args) => DeleteNodes(SelectedNodes);
+
+		private void AddEdgeButtonClick(object sender, RoutedEventArgs args) {
+			Viewer.InsertingEdge = AddEdgeButton.IsChecked == true;
+			if (AddEdgeButton.IsChecked == true)
+				Viewer.LayoutEditor.PrepareForEdgeDragging();
+			else
+				Viewer.LayoutEditor.ForgetEdgeDragging();
+		}
+
+		private void DeleteEdgeButtonClick(object sender, RoutedEventArgs args) => DeleteEdges(SelectedNodes);
+
+		private void AutoHighlightButtonClick(object sender, RoutedEventArgs args) {
+			if (AutoHighlightButton.IsChecked == true) {
+				if (SelectedNodes.Count == 1)
+					StartHighlighting();
+			}
+			else if (Highlighting)
+				StopHighlighting();
+		}
+
+		private void SortByRelativityButtonClick(object sender, RoutedEventArgs args) {
+			var resultWindow = new SortResultWindow(Graph);
+			resultWindow.ShowDialog();
+		}
+
+		private void SelectedNodesCollectionChanged(object sender, NotifyCollectionChangedEventArgs args) {
+			RefreshToolbar();
+			if (AutoHighlightButton.IsChecked == true) {
+				if (SelectedNodes.Count == 1)
+					StartHighlighting();
+				else if (SelectedNodes.Count != 1 && Highlighting)
+					StopHighlighting();
+			}
+		}
 
 		private static MenuItem NewMenuItem(string header, RoutedEventHandler onClick) {
 			var result = new MenuItem {Header = header};
@@ -253,7 +280,7 @@ namespace RelationshipNetwork {
 
 		private void HighlightRelationship() {
 			foreach (var node in Graph.Nodes)
-				node.Attr.Color = (int)node.UserData switch {
+				node.Attr.Color = node.Label.FontColor = (int)node.UserData switch {
 					-2 => Color.Black,
 					-1 => Color.Cyan,
 					0  => Color.Gray,
@@ -264,7 +291,7 @@ namespace RelationshipNetwork {
 
 		private void HideRelationship() {
 			foreach (var node in Graph.Nodes)
-				node.Attr.Color = Color.Black;
+				node.Attr.Color = node.Label.FontColor = Color.Black;
 		}
 
 		private void StartHighlighting() {
@@ -284,7 +311,5 @@ namespace RelationshipNetwork {
 				HighlightRelationship();
 			}
 		}
-
-		private void MainWindow_Loaded(object sender, RoutedEventArgs e) { }
 	}
 }
