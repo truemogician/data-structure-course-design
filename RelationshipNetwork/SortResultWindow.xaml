@@ -1,12 +1,13 @@
 ﻿<Window x:Class="RelationshipNetwork.SortResultWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d"
-        Title="关联度排序" Height="Auto" MaxHeight="200" Width="174"
-        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		mc:Ignorable="d"
+		Title="关联度排序" Height="Auto" MaxHeight="200" Width="195"
+		DataContext="{Binding RelativeSource={RelativeSource Self}}" WindowStartupLocation="CenterOwner">
 	<Grid>
+		<ScrollViewer VerticalScrollBarVisibility="Visible" />
 		<ListView ItemsSource="{Binding List}">
 			<ListView.Resources>
 				<Style x:Key="HeaderStyle" TargetType="GridViewColumnHeader">
@@ -21,9 +22,9 @@
 			<ListView.View>
 				<GridView AllowsColumnReorder="true">
 					<GridViewColumn DisplayMemberBinding="{Binding Path=Name}" Header="姓名" Width="100"
-					                HeaderContainerStyle="{StaticResource HeaderStyle}" />
+									HeaderContainerStyle="{StaticResource HeaderStyle}" />
 					<GridViewColumn DisplayMemberBinding="{Binding Path=Relativity}" Header="关联度" Width="50"
-					                HeaderContainerStyle="{StaticResource HeaderStyle}" />
+									HeaderContainerStyle="{StaticResource HeaderStyle}" />
 				</GridView>
 			</ListView.View>
 		</ListView>
