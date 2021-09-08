@@ -28,6 +28,12 @@
     <None Remove="Assets\Thread.png" />
     <None Remove="Assets\Undo.png" />
     <None Remove="Assets\Unlink.png" />
+    <None Remove="Examples\Tree.msagl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Examples\Tree.msagl">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutomaticGraphLayout.WpfGraphControl" Version="1.1.12" />
@@ -71,10 +77,5 @@
     <Resource Include="Assets\Unlink.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Examples\Tree.msagl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>
