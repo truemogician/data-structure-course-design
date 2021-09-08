@@ -37,7 +37,7 @@ namespace RelationshipNetwork {
 			Viewer = ViewerFieldInfo.GetValue(GraphControl) as GraphViewer;
 			RefreshToolbar();
 
-			GraphChanged += (_, _) => RefreshHighlight();
+			GraphChanged += OnGraphChanged;
 			GraphControl.MouseRightButtonUp += GraphControlMouseRightButtonUp;
 			LoadGraphButton.Click += LoadGraphButtonClick;
 			SaveGraphButton.Click += SaveGraphButtonClick;
@@ -115,6 +115,11 @@ namespace RelationshipNetwork {
 
 		#region Methods
 		#region Event Handlers
+		private void OnGraphChanged(object sender, EventArgs args) {
+			RemoveEdgesArrows(Graph);
+			RefreshHighlight();
+		}
+
 		private void GraphControlMouseRightButtonUp(object sender, RoutedEventArgs args) {
 			(SelectedNodes.Count switch {
 				0  => BackgroundMenu,
