@@ -14,16 +14,6 @@ using Point = Microsoft.Msagl.Core.Geometry.Point;
 
 namespace RelationshipNetwork {
 	public partial class MainWindow {
-		#region Fields
-		private static readonly FieldInfo ViewerFieldInfo = typeof(AutomaticGraphLayoutControl).GetField("_graphViewer", BindingFlags.NonPublic | BindingFlags.Instance);
-
-		private readonly OpenFileDialog _openFileDialog = new();
-
-		private readonly SaveFileDialog _saveFileDialog = new();
-
-		private bool _highlighting;
-		#endregion
-
 		#region Constructors
 		public MainWindow() {
 			InitializeComponent();
@@ -55,6 +45,20 @@ namespace RelationshipNetwork {
 		}
 		#endregion
 
+		#region Events
+		public event EventHandler GraphChanged = delegate { };
+		#endregion
+
+		#region Fields
+		private static readonly FieldInfo ViewerFieldInfo = typeof(AutomaticGraphLayoutControl).GetField("_graphViewer", BindingFlags.NonPublic | BindingFlags.Instance);
+
+		private readonly OpenFileDialog _openFileDialog = new();
+
+		private readonly SaveFileDialog _saveFileDialog = new();
+
+		private bool _highlighting;
+		#endregion
+
 		#region Properties
 		public GraphViewer Viewer { get; }
 
@@ -75,7 +79,7 @@ namespace RelationshipNetwork {
 		public ObservableCollection<IViewerNode> SelectedNodes { get; }
 
 		/// <summary>
-		/// Whether the graph is currently highlighted
+		///     Whether the graph is currently highlighted
 		/// </summary>
 		public bool Highlighting {
 			get => _highlighting;
@@ -107,10 +111,6 @@ namespace RelationshipNetwork {
 				}
 			};
 		#endregion
-		#endregion
-
-		#region Events
-		public event EventHandler GraphChanged = delegate { };
 		#endregion
 
 		#region Methods
@@ -249,7 +249,7 @@ namespace RelationshipNetwork {
 		}
 
 		/// <summary>
-		/// Render nodes by their relationship
+		///     Render nodes by their relationship
 		/// </summary>
 		private void HighlightRelationship() {
 			foreach (var node in Graph.Nodes)
@@ -263,7 +263,7 @@ namespace RelationshipNetwork {
 		}
 
 		/// <summary>
-		/// Hide nodes highlight
+		///     Hide nodes highlight
 		/// </summary>
 		private void HideRelationship() {
 			foreach (var node in Graph.Nodes)
@@ -349,7 +349,7 @@ namespace RelationshipNetwork {
 
 		#region Algortithm
 		/// <summary>
-		/// Calculate node relativity to <paramref name="target"/> of all nodes in the graph
+		///     Calculate node relativity to <paramref name="target" /> of all nodes in the graph
 		/// </summary>
 		/// <param name="target"></param>
 		private void CalculateRelativity(Node target) {
@@ -376,7 +376,7 @@ namespace RelationshipNetwork {
 		}
 
 		/// <summary>
-		/// Calculate the edges that connects <paramref name="source"/> and <paramref name="target"/>
+		///     Calculate the edges that connects <paramref name="source" /> and <paramref name="target" />
 		/// </summary>
 		/// <param name="source"></param>
 		/// <param name="target"></param>

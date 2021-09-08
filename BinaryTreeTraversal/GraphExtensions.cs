@@ -9,17 +9,17 @@ using Node = Microsoft.Msagl.Drawing.Node;
 
 namespace BinaryTreeTraversal {
 	/// <summary>
-	/// Extension methods for <see cref="Graph"/> and some other relevant classes
+	///     Extension methods for <see cref="Graph" /> and some other relevant classes
 	/// </summary>
 	public static class GraphExtensions {
 		public delegate int LeftRightDecider(Node nodeA, Node nodeB, Node parent, Graph graph);
 
 		/// <summary>
-		/// Calculate the tree info of <paramref name="graph"/> and return the root node if building succeeds
+		///     Calculate the tree info of <paramref name="graph" /> and return the root node if building succeeds
 		/// </summary>
 		/// <param name="graph"></param>
 		/// <returns>Root node of the tree</returns>
-		/// <exception cref="InvalidOperationException">Throws if <paramref name="graph"/> is not a tree</exception>
+		/// <exception cref="InvalidOperationException">Throws if <paramref name="graph" /> is not a tree</exception>
 		public static Node GetTreeRoot(this Graph graph) {
 			var nodeIds = graph.Nodes.Select(node => node.Id);
 			var nodes = new Dictionary<string, NodeInfo>();
@@ -60,13 +60,17 @@ namespace BinaryTreeTraversal {
 		}
 
 		/// <summary>
-		/// Check whether a built tree is binary, and arrange child nodes to left or right depending on <paramref name="leftRightDecider"/>
+		///     Check whether a built tree is binary, and arrange child nodes to left or right depending on
+		///     <paramref name="leftRightDecider" />
 		/// </summary>
 		/// <param name="graph"></param>
 		/// <param name="leftRightDecider">A function to decide which child node is left or right</param>
-		/// <param name="addLeftRightConstraint">If true, layer constraints will be added to ensure the left-right relationship when layout is refreshed</param>
+		/// <param name="addLeftRightConstraint">
+		///     If true, layer constraints will be added to ensure the left-right relationship
+		///     when layout is refreshed
+		/// </param>
 		/// <returns>Root node of the binary tree</returns>
-		/// <exception cref="InvalidOperationException">Throws if <paramref name="graph"/> is not a binary tree</exception>
+		/// <exception cref="InvalidOperationException">Throws if <paramref name="graph" /> is not a binary tree</exception>
 		public static Node BuildBinaryTree(this Graph graph, LeftRightDecider leftRightDecider, bool addLeftRightConstraint = true) {
 			var root = GetTreeRoot(graph);
 			if (addLeftRightConstraint)
@@ -131,7 +135,7 @@ namespace BinaryTreeTraversal {
 		}
 
 		/// <summary>
-		/// Threadify a tree after <see cref="BinaryInfo"/> is calculated by <see cref="order"/>
+		///     Threadify a tree after <see cref="BinaryInfo" /> is calculated by <see cref="order" />
 		/// </summary>
 		/// <param name="root">Root of the binary tree</param>
 		/// <param name="order"></param>
@@ -143,7 +147,7 @@ namespace BinaryTreeTraversal {
 		}
 
 		/// <summary>
-		/// Remove all threaded children
+		///     Remove all threaded children
 		/// </summary>
 		/// <param name="node">Root of the binary tree</param>
 		public static void Unthreadify(this Node node) {
@@ -167,7 +171,7 @@ namespace BinaryTreeTraversal {
 		}
 
 		/// <summary>
-		/// Create a <see cref="IViewerEdge"/> from <see cref="Edge"/>
+		///     Create a <see cref="IViewerEdge" /> from <see cref="Microsoft.Msagl.Drawing.Edge" />
 		/// </summary>
 		/// <param name="viewer"></param>
 		/// <param name="edge"></param>
