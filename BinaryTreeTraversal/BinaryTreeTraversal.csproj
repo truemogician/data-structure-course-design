@@ -76,4 +76,9 @@
     </Resource>
     <Resource Include="Resource.xaml" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Examples\Tree.msagl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

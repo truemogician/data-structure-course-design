@@ -18,20 +18,15 @@ namespace BinaryTreeTraversal {
 		public MainWindow() {
 			InitializeComponent();
 			SelectedNodes = new ObservableCollection<IViewerNode>();
-			GraphControl.Graph = new Graph {
-				Attr = {
-					LayerDirection = LayerDirection.TB,
-					BackgroundColor = Color.Transparent
-				}
-			};
+			GraphControl.Graph = new Graph();
 			//Retrieve private field by reflection
 			Viewer = ViewerFieldInfo.GetValue(GraphControl) as GraphViewer;
-
 			Viewer!.LayoutEditor.ChangeInUndoRedoList += (_, _) => _upToDate = false;
 			SelectedNodes.CollectionChanged += (_, _) => RefreshToolbar();
 			GraphChange += OnGraphChanged;
 
 			//ToolBar button events assignment
+			GraphControl.Loaded += GraphControlLoaded;
 			GraphControl.MouseRightButtonUp += GraphControlMouseRightButtonUp;
 			LoadGraphButton.Click += LoadGraphButtonClick;
 			SaveGraphButton.Click += SaveGraphButtonClick;
@@ -169,6 +164,8 @@ namespace BinaryTreeTraversal {
 				StatusBarTextBlock.Text = $"共有{count}个叶子结点";
 			}
 		}
+
+		private void GraphControlLoaded(object sender, RoutedEventArgs args) => Graph = Graph.Read("Examples/Tree.msagl");
 
 		/// <summary>
 		///     Show context menu according to the number of selected nodes

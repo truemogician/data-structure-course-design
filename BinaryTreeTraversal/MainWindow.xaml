@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wpfGraphControl="http://mlsagl"
-        Title="二叉树遍历" Height="350" Width="600" DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="二叉树遍历" Height="450" Width="600" DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Icon="/Assets/Binary.ico">
 	<Grid>
 		<Grid.RowDefinitions>

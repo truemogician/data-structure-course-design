@@ -18,16 +18,9 @@ namespace RelationshipNetwork {
 		public MainWindow() {
 			InitializeComponent();
 			SelectedNodes = new ObservableCollection<IViewerNode>();
-			GraphControl.Graph = new Graph {
-				Attr = {
-					LayerDirection = LayerDirection.LR,
-					BackgroundColor = Color.Transparent
-				}
-			};
-			Viewer = ViewerFieldInfo.GetValue(GraphControl) as GraphViewer;
-			RefreshToolbar();
 
 			GraphChanged += OnGraphChanged;
+			GraphControl.Loaded += GraphControlLoaded;
 			GraphControl.MouseRightButtonUp += GraphControlMouseRightButtonUp;
 			LoadGraphButton.Click += LoadGraphButtonClick;
 			SaveGraphButton.Click += SaveGraphButtonClick;
@@ -42,6 +35,10 @@ namespace RelationshipNetwork {
 			AutoHighlightButton.Click += AutoHighlightButtonClick;
 			SortByRelativityButton.Click += SortByRelativityButtonClick;
 			SelectedNodes.CollectionChanged += SelectedNodesCollectionChanged;
+
+			GraphControl.Graph = new Graph();
+			Viewer = ViewerFieldInfo.GetValue(GraphControl) as GraphViewer;
+			RefreshToolbar();
 		}
 		#endregion
 
@@ -69,8 +66,7 @@ namespace RelationshipNetwork {
 				GraphControl.Graph = value;
 				GraphChanged(this, EventArgs.Empty);
 				if (Viewer is not null)
-					foreach (var viewerNode in ViewerNodes)
-						AttachEvent(viewerNode);
+					AttachEventToAll();
 			}
 		}
 
@@ -120,6 +116,8 @@ namespace RelationshipNetwork {
 			RefreshHighlight();
 		}
 
+		private void GraphControlLoaded(object sender, RoutedEventArgs args) => Graph = Graph.Read("Examples/Network.msagl");
+
 		private void GraphControlMouseRightButtonUp(object sender, RoutedEventArgs args) {
 			(SelectedNodes.Count switch {
 				0  => BackgroundMenu,
@@ -153,16 +151,7 @@ namespace RelationshipNetwork {
 				Viewer.LayoutEditor.Redo();
 		}
 
-		private void RefreshLayoutButtonClick(object sender, RoutedEventArgs args) {
-			foreach (var vNode in ViewerNodes)
-				vNode.Node.Attr.LineWidth = 1;
-			SelectedNodes.Clear();
-			Viewer.NeedToCalculateLayout = true;
-			RemoveEdgesArrows(Viewer.Graph);
-			Viewer.Graph = Viewer.Graph;
-			Viewer.NeedToCalculateLayout = false;
-			AttachEventToAll();
-		}
+		private void RefreshLayoutButtonClick(object sender, RoutedEventArgs args) => RefreshLayout();
 
 		private void AddNodeButtonClick(object sender, RoutedEventArgs args) {
 			AddNode(NodeNameTextBox.Text);
@@ -225,7 +214,7 @@ namespace RelationshipNetwork {
 		private static MenuItem NewMenuItem(string header, Action onClick) => NewMenuItem(header, (_, _) => onClick());
 
 		private void AttachEvent(IViewerNode viewerNode) {
-			viewerNode.MarkedForDraggingEvent += (_, _) => { SelectedNodes.Add(viewerNode); };
+			viewerNode.MarkedForDraggingEvent += (_, _) => SelectedNodes.Add(viewerNode);
 			viewerNode.UnmarkedForDraggingEvent += (_, _) => SelectedNodes.Remove(viewerNode);
 		}
 
@@ -246,6 +235,17 @@ namespace RelationshipNetwork {
 		private void RefreshToolbar() {
 			DeleteNodeButton.IsEnabled = SelectedNodes.Count > 0;
 			DeleteEdgeButton.IsEnabled = SelectedNodes.Count > 1;
+		}
+
+		private void RefreshLayout() {
+			foreach (var vNode in ViewerNodes)
+				vNode.Node.Attr.LineWidth = 1;
+			SelectedNodes.Clear();
+			Viewer.NeedToCalculateLayout = true;
+			RemoveEdgesArrows(Viewer.Graph);
+			Viewer.Graph = Viewer.Graph;
+			Viewer.NeedToCalculateLayout = false;
+			AttachEventToAll();
 		}
 
 		/// <summary>
