@@ -61,6 +61,7 @@ namespace RelationshipNetwork {
 		public Graph Graph {
 			get => GraphControl.Graph;
 			private set {
+				RemoveEdgesArrows(value);
 				GraphControl.Graph = value;
 				GraphChanged(this, EventArgs.Empty);
 				if (Viewer is not null)
@@ -152,6 +153,7 @@ namespace RelationshipNetwork {
 				vNode.Node.Attr.LineWidth = 1;
 			SelectedNodes.Clear();
 			Viewer.NeedToCalculateLayout = true;
+			RemoveEdgesArrows(Viewer.Graph);
 			Viewer.Graph = Viewer.Graph;
 			Viewer.NeedToCalculateLayout = false;
 			AttachEventToAll();
@@ -184,7 +186,7 @@ namespace RelationshipNetwork {
 		private void AutoHighlightButtonClick(object sender, RoutedEventArgs args) {
 			if (AutoHighlightButton.IsChecked == true) {
 				if (SelectedNodes.Count == 1)
-					StartHighlighting();
+					StartHighlighting(SelectedNodes[0].Node);
 			}
 			else if (Highlighting)
 				StopHighlighting();
@@ -199,7 +201,9 @@ namespace RelationshipNetwork {
 			RefreshToolbar();
 			if (AutoHighlightButton.IsChecked == true) {
 				if (SelectedNodes.Count == 1)
-					StartHighlighting();
+					StartHighlighting(SelectedNodes[0].Node);
+				else if (args.Action == NotifyCollectionChangedAction.Add && SelectedNodes.Count == 2 && Highlighting)
+					HighlightPath(SelectedNodes[0].Node, SelectedNodes[1].Node);
 				else if (SelectedNodes.Count != 1 && Highlighting)
 					StopHighlighting();
 			}
@@ -227,6 +231,13 @@ namespace RelationshipNetwork {
 		#endregion
 
 		#region Render
+		private static void RemoveEdgesArrows(Graph graph) {
+			foreach (var edge in graph.Edges) {
+				edge.Attr.ArrowheadAtSource = ArrowStyle.None;
+				edge.Attr.ArrowheadAtTarget = ArrowStyle.None;
+			}
+		}
+
 		private void RefreshToolbar() {
 			DeleteNodeButton.IsEnabled = SelectedNodes.Count > 0;
 			DeleteEdgeButton.IsEnabled = SelectedNodes.Count > 1;
@@ -252,10 +263,15 @@ namespace RelationshipNetwork {
 		private void HideRelationship() {
 			foreach (var node in Graph.Nodes)
 				node.Attr.Color = node.Label.FontColor = Color.Black;
+			foreach (var edge in Graph.Edges) {
+				edge.Attr.LineWidth = 1;
+				edge.Attr.Color = Color.Black;
+			}
 		}
 
-		private void StartHighlighting() {
-			CalculateRelativity(SelectedNodes.Single().Node);
+		private void StartHighlighting(Node node) {
+			CalculateRelativity(node);
+			HideRelationship();
 			HighlightRelationship();
 			Highlighting = true;
 		}
@@ -263,6 +279,15 @@ namespace RelationshipNetwork {
 		private void StopHighlighting() {
 			HideRelationship();
 			Highlighting = false;
+		}
+
+		private void HighlightPath(Node source, Node target) {
+			if ((int)source.UserData != -2 || (int)target.UserData <= 0)
+				return;
+			foreach (var edge in CalculatePaths(source, target)) {
+				edge.Attr.LineWidth = 2;
+				edge.Attr.Color = Color.Red;
+			}
 		}
 
 		private void RefreshHighlight() {
@@ -343,6 +368,26 @@ namespace RelationshipNetwork {
 				)
 				.SelectMany(nodes => nodes))
 				nd.UserData = (int)nd.UserData + 1;
+		}
+
+		/// <summary>
+		/// Calculate the edges that connects <paramref name="source"/> and <paramref name="target"/>
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="target"></param>
+		/// <returns></returns>
+		private IEnumerable<Edge> CalculatePaths(Node source, Node target) {
+			foreach (var firstEdge in source.InEdges.Concat(source.OutEdges)) {
+				var middleNode = Equals(source, firstEdge.SourceNode) ? firstEdge.TargetNode : firstEdge.SourceNode;
+				foreach (var secondEdge in middleNode.InEdges.Concat(middleNode.OutEdges)) {
+					var targetNode = Equals(middleNode, secondEdge.SourceNode) ? secondEdge.TargetNode : secondEdge.SourceNode;
+					if (Equals(targetNode, target)) {
+						yield return firstEdge;
+						yield return secondEdge;
+						break;
+					}
+				}
+			}
 		}
 		#endregion
 		#endregion
