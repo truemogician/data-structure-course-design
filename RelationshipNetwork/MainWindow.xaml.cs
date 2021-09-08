@@ -73,6 +73,9 @@ namespace RelationshipNetwork {
 
 		public ObservableCollection<IViewerNode> SelectedNodes { get; }
 
+		/// <summary>
+		/// Whether the graph is currently highlighted
+		/// </summary>
 		public bool Highlighting {
 			get => _highlighting;
 			private set {
@@ -229,6 +232,9 @@ namespace RelationshipNetwork {
 			DeleteEdgeButton.IsEnabled = SelectedNodes.Count > 1;
 		}
 
+		/// <summary>
+		/// Render nodes by their relationship
+		/// </summary>
 		private void HighlightRelationship() {
 			foreach (var node in Graph.Nodes)
 				node.Attr.Color = node.Label.FontColor = (int)node.UserData switch {
@@ -240,6 +246,9 @@ namespace RelationshipNetwork {
 				};
 		}
 
+		/// <summary>
+		/// Hide nodes highlight
+		/// </summary>
 		private void HideRelationship() {
 			foreach (var node in Graph.Nodes)
 				node.Attr.Color = node.Label.FontColor = Color.Black;
@@ -309,6 +318,10 @@ namespace RelationshipNetwork {
 		#endregion
 
 		#region Algortithm
+		/// <summary>
+		/// Calculate node relativity to <paramref name="target"/> of all nodes in the graph
+		/// </summary>
+		/// <param name="target"></param>
 		private void CalculateRelativity(Node target) {
 			foreach (var node in Graph.Nodes)
 				node.UserData = 0;
